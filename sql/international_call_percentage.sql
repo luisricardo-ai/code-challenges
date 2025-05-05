@@ -70,3 +70,18 @@ SELECT
     100.0 * COUNT(*)
   / (SELECT COUNT(*) FROM phone_calls),1) AS international_call_pct
 FROM international_calls;
+
+-- WITH FILTER
+
+SELECT 
+  ROUND(
+    100.0 * COUNT(*) FILTER(
+      WHERE receivers.country_id != callers.country_id
+    ) / COUNT(*), 1
+  ) AS international_call_pct
+FROM phone_calls AS calls
+LEFT JOIN phone_info AS callers
+  ON callers.caller_id = calls.caller_id
+LEFT JOIN phone_info AS receivers
+  ON receivers.caller_id = calls.receiver_id
+;
